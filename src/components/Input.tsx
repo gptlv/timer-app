@@ -13,14 +13,15 @@ type Props = {
 const Input = ({ inputTime, handleInputChange }: Props) => {
   return (
     <div>
-      <input
+      {/* <input
         // {...(isInputDisabled ? { disabled: true } : {})}
         min="0"
         max="59"
         type="number"
         value={inputTime.hours}
         onChange={(e) => handleInputChange(e, "hours")}
-      />
+      /> */}
+
       <input
         // {...(isInputDisabled ? { disabled: true } : {})}
         min="0"
