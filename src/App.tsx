@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Input from "./components/Input";
 import Timer from "./components/Timer";
 import Buttons from "./components/Buttons";
-import { Time } from "./shared/types";
+import { Time, InputType } from "./shared/types";
 
 type Props = {};
 
@@ -31,25 +31,51 @@ const App = ({}: Props) => {
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const elapsedTimeRef = useRef<number>(0);
 
-  const handleInputChange = useCallback(
-    (
-      e: React.ChangeEvent<HTMLInputElement>,
-      type: "hours" | "minutes" | "seconds"
-    ) => {
-      const currentValue = parseInt(e.target.value) || 0;
-      if (isNaN(currentValue)) return;
+  // const handleInputChange = useCallback(
+  //   (
+  //     e: React.UIEvent<HTMLUListElement>,
+  //     type: "hours" | "minutes" | "seconds"
+  //   ) => {
 
-      setInputTime((prevState) => {
-        return {
-          ...prevState,
-          [type]: currentValue,
-          totalSeconds:
-            prevState.hours * 3600 + prevState.minutes * 60 + prevState.seconds,
-        };
-      });
-    },
-    []
-  );
+  //     const currentValue = parseInt(e.target.value) || 0; //! 0?
+  //     if (isNaN(currentValue)) return;
+
+  //     setInputTime((prevState) => {
+  //       return {
+  //         ...prevState,
+  //         [type]: currentValue,
+  //         totalSeconds:
+  //           prevState.hours * 3600 + prevState.minutes * 60 + prevState.seconds,
+  //       };
+  //     });
+  //   },
+  //   []
+  // );
+
+  const handleScroll = (
+    e: React.UIEvent<HTMLUListElement>,
+    type: InputType
+  ) => {
+    e.preventDefault();
+    const container = e.currentTarget;
+    const containerHeight = container.offsetHeight;
+    const scrollPosition = container.scrollTop;
+    const items = container.querySelectorAll("li");
+    const itemHeight = items[0].offsetHeight;
+    const centerIndex = Math.floor(
+      (scrollPosition + containerHeight / 2) / itemHeight
+    );
+    const centerItem = items[centerIndex].textContent;
+    setInputTime((prevState) => {
+      return {
+        ...prevState,
+        [type]: centerItem,
+        totalSeconds:
+          prevState.hours * 3600 + prevState.minutes * 60 + prevState.seconds,
+      };
+    });
+    console.log(inputTime);
+  };
 
   const handleStartButtonClick = () => {
     const { hours, minutes, seconds } = inputTime;
@@ -168,7 +194,7 @@ const App = ({}: Props) => {
         <Input
           isInputDisabled={isInputDisabled}
           inputTime={inputTime}
-          handleInputChange={handleInputChange}
+          handleScroll={handleScroll}
         />
       ) : (
         ""
