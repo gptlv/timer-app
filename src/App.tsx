@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Input from "./components/Input";
 import Timer from "./components/Timer";
 import Buttons from "./components/Buttons";
-import { Time, InputType } from "./shared/types";
+import { Time, InputType, InputIndexes } from "./shared/types";
 
 type Props = {};
 
@@ -21,6 +21,18 @@ const App = ({}: Props) => {
     totalSeconds: 0,
   });
 
+  const [inputIndexes, setInputIndexes] = useState<InputIndexes>({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  const [scrollPositions, setScrollPositions] = useState<InputIndexes>({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
   const [isInputDisabled, setIsInputDisabled] = useState<boolean>(false);
   const [isStartButtonVisible, setIsStartButtonVisible] =
     useState<boolean>(false);
@@ -31,27 +43,6 @@ const App = ({}: Props) => {
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const elapsedTimeRef = useRef<number>(0);
 
-  // const handleInputChange = useCallback(
-  //   (
-  //     e: React.UIEvent<HTMLUListElement>,
-  //     type: "hours" | "minutes" | "seconds"
-  //   ) => {
-
-  //     const currentValue = parseInt(e.target.value) || 0; //! 0?
-  //     if (isNaN(currentValue)) return;
-
-  //     setInputTime((prevState) => {
-  //       return {
-  //         ...prevState,
-  //         [type]: currentValue,
-  //         totalSeconds:
-  //           prevState.hours * 3600 + prevState.minutes * 60 + prevState.seconds,
-  //       };
-  //     });
-  //   },
-  //   []
-  // );
-
   const handleScroll = (
     e: React.UIEvent<HTMLUListElement>,
     type: InputType
@@ -59,13 +50,25 @@ const App = ({}: Props) => {
     e.preventDefault();
     const container = e.currentTarget;
     const containerHeight = container.offsetHeight;
-    const scrollPosition = container.scrollTop;
     const items = container.querySelectorAll("li");
     const itemHeight = items[0].offsetHeight;
+    const scrollPosition = container.scrollTop - 4 * itemHeight; //4 elements gap before and after options
+    setScrollPositions((prevState) => {
+      return {
+        ...prevState,
+        [type]: scrollPosition,
+      };
+    });
     const centerIndex = Math.floor(
       (scrollPosition + containerHeight / 2) / itemHeight
     );
-    const centerItem = items[centerIndex].textContent;
+    setInputIndexes((prevState) => {
+      return {
+        ...prevState,
+        [type]: centerIndex,
+      };
+    });
+    const centerItem = parseInt(items[centerIndex].textContent || "0"); //?
     setInputTime((prevState) => {
       return {
         ...prevState,
@@ -75,6 +78,8 @@ const App = ({}: Props) => {
       };
     });
     console.log(inputTime);
+    console.log(inputIndexes);
+    console.log(scrollPositions);
   };
 
   const handleStartButtonClick = () => {
@@ -106,24 +111,10 @@ const App = ({}: Props) => {
   };
 
   const resumeTimer = () => {
-    // setIsInputDisabled(true);
     setIsTimerRunning(true);
-    // setTimer((prevState) => {
-    //   const currentTotalSeconds =
-    //     prevState.totalSeconds + elapsedTimeRef.current;
-    //   return {
-    //     ...prevState,
-    //     hours: Math.floor(currentTotalSeconds / 3600),
-    //     minutes: Math.floor((currentTotalSeconds % 3600) / 60),
-    //     seconds: Math.floor(currentTotalSeconds % 60),
-    //     totalSeconds: currentTotalSeconds,
-    //   };
-    // });
   };
 
   const pauseTimer = () => {
-    // setIsCancelButtonDisabled(false);
-    // setIsInputDisabled(false);
     setIsTimerRunning(false);
   };
 
@@ -136,12 +127,22 @@ const App = ({}: Props) => {
       pauseTimer();
     }
   };
+
+  const handleTimerFinish = () => {
+    setIsTimerRunning(false);
+    handleCancelButtonClick();
+  };
+
   const decrementTimerValues = useCallback(() => {
     setTimer((currentTimerValue) => {
       const newTotalSeconds =
         currentTimerValue.totalSeconds > 1
           ? currentTimerValue.totalSeconds - 1
           : 0;
+
+      if (newTotalSeconds === 0) {
+        handleTimerFinish();
+      }
 
       return {
         hours: Math.floor(newTotalSeconds / 3600),
@@ -191,11 +192,7 @@ const App = ({}: Props) => {
   return (
     <div>
       {!isInputDisabled ? (
-        <Input
-          isInputDisabled={isInputDisabled}
-          inputTime={inputTime}
-          handleScroll={handleScroll}
-        />
+        <Input handleScroll={handleScroll} inputIndexes={inputIndexes} />
       ) : (
         ""
       )}

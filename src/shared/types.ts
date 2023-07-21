@@ -11,3 +11,9 @@ export type Option = {
 };
 
 export type InputType = "hours" | "minutes" | "seconds";
+
+export type InputIndexes = {
+  hours: number;
+  minutes: number;
+  seconds: number;
+};
