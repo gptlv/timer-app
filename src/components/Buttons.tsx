@@ -16,7 +16,7 @@ const Buttons = ({
   isPauseButtonPressed,
 }: Props) => {
   return (
-    <div>
+    <div className="w-full h-full flex justify-center items-center">
       <button
         {...(isCancelButtonDisabled ? { disabled: true } : {})}
         onClick={handleCancelButtonClick}
@@ -24,12 +24,7 @@ const Buttons = ({
         Cancel
       </button>
       {!isStartButtonVisible ? (
-        <button
-          // {...(isStartButtonDisabled ? { disabled: true, visible: false } : {})}
-          onClick={handleStartButtonClick}
-        >
-          Start
-        </button>
+        <button onClick={handleStartButtonClick}>Start</button>
       ) : null}
       {isStartButtonVisible ? (
         <button onClick={handlePauseButtonClick}>

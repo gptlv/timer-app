@@ -31,7 +31,7 @@ const App = ({}: Props) => {
     hours: 0,
     minutes: 0,
     seconds: 0,
-  });
+  }); //?
 
   const [isInputDisabled, setIsInputDisabled] = useState<boolean>(false);
   const [isStartButtonVisible, setIsStartButtonVisible] =
@@ -41,6 +41,7 @@ const App = ({}: Props) => {
   const [isPauseButtonPressed, setIsPauseButtonPressed] =
     useState<boolean>(false);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
+  const [optionItemHeight, setOptionItemHeight] = useState<number>(0);
   const elapsedTimeRef = useRef<number>(0);
 
   const handleScroll = (
@@ -52,6 +53,7 @@ const App = ({}: Props) => {
     const containerHeight = container.offsetHeight;
     const items = container.querySelectorAll("li");
     const itemHeight = items[0].offsetHeight;
+    setOptionItemHeight(itemHeight);
     const scrollPosition = container.scrollTop - 4 * itemHeight; //4 elements gap before and after options
     setScrollPositions((prevState) => {
       return {
@@ -68,7 +70,7 @@ const App = ({}: Props) => {
         [type]: centerIndex,
       };
     });
-    const centerItem = parseInt(items[centerIndex].textContent || "0"); //?
+    const centerItem = Number(items[centerIndex].textContent ?? 0);
     setInputTime((prevState) => {
       return {
         ...prevState,
@@ -77,12 +79,9 @@ const App = ({}: Props) => {
           prevState.hours * 3600 + prevState.minutes * 60 + prevState.seconds,
       };
     });
-    console.log(inputTime);
-    console.log(inputIndexes);
-    console.log(scrollPositions);
   };
 
-  const handleStartButtonClick = () => {
+  const handleStartButtonClick = useCallback(() => {
     const { hours, minutes, seconds } = inputTime;
     const totalSeconds = hours * 3600 + minutes * 60 + seconds;
     const newTimer = { hours, minutes, seconds, totalSeconds };
@@ -94,9 +93,9 @@ const App = ({}: Props) => {
     elapsedTimeRef.current = 0;
 
     setTimer(newTimer);
-  };
+  }, [inputTime]);
 
-  const handleCancelButtonClick = () => {
+  const handleCancelButtonClick = useCallback(() => {
     setIsCancelButtonDisabled(true);
     setIsInputDisabled(false);
     setIsStartButtonVisible(false);
@@ -108,17 +107,17 @@ const App = ({}: Props) => {
       seconds: 0,
       totalSeconds: 0,
     });
-  };
+  }, []);
 
-  const resumeTimer = () => {
+  const resumeTimer = useCallback(() => {
     setIsTimerRunning(true);
-  };
+  }, []);
 
-  const pauseTimer = () => {
+  const pauseTimer = useCallback(() => {
     setIsTimerRunning(false);
-  };
+  }, []);
 
-  const handlePauseButtonClick = () => {
+  const handlePauseButtonClick = useCallback(() => {
     if (isPauseButtonPressed) {
       setIsPauseButtonPressed(false);
       resumeTimer();
@@ -126,12 +125,12 @@ const App = ({}: Props) => {
       setIsPauseButtonPressed(true);
       pauseTimer();
     }
-  };
+  }, [isPauseButtonPressed, pauseTimer, resumeTimer]);
 
-  const handleTimerFinish = () => {
+  const handleTimerFinish = useCallback(() => {
     setIsTimerRunning(false);
     handleCancelButtonClick();
-  };
+  }, [handleCancelButtonClick]);
 
   const decrementTimerValues = useCallback(() => {
     setTimer((currentTimerValue) => {
@@ -163,7 +162,7 @@ const App = ({}: Props) => {
           console.log(prevState);
           return { ...prevState };
         });
-      }, 100);
+      }, 1000);
 
       return () => clearInterval(id);
     }
@@ -190,23 +189,31 @@ const App = ({}: Props) => {
   }, [isTimerRunning]);
 
   return (
-    <div>
-      {!isInputDisabled ? (
-        <Input handleScroll={handleScroll} inputIndexes={inputIndexes} />
-      ) : (
-        ""
-      )}
+    <div className="h-screen w-full flex flex-col items-center justify-center">
+      <div className="w-4/5 text-[3.5vh] leading-[3.5vh]">
+        {!isInputDisabled ? (
+          <Input
+            handleScroll={handleScroll}
+            inputIndexes={inputIndexes}
+            optionItemHeight={optionItemHeight}
+          />
+        ) : (
+          ""
+        )}
 
-      {isInputDisabled ? <Timer timer={timer} /> : ""}
+        {isInputDisabled ? <Timer timer={timer} /> : ""}
+      </div>
 
-      <Buttons
-        isStartButtonVisible={isStartButtonVisible}
-        isCancelButtonDisabled={isCancelButtonDisabled}
-        handleStartButtonClick={handleStartButtonClick}
-        handleCancelButtonClick={handleCancelButtonClick}
-        handlePauseButtonClick={handlePauseButtonClick}
-        isPauseButtonPressed={isPauseButtonPressed}
-      />
+      <div className="h-1/2 w-4/5 flex-col items-center justify-between">
+        <Buttons
+          isStartButtonVisible={isStartButtonVisible}
+          isCancelButtonDisabled={isCancelButtonDisabled}
+          handleStartButtonClick={handleStartButtonClick}
+          handleCancelButtonClick={handleCancelButtonClick}
+          handlePauseButtonClick={handlePauseButtonClick}
+          isPauseButtonPressed={isPauseButtonPressed}
+        />
+      </div>
     </div>
   );
 };

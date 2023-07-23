@@ -4,6 +4,7 @@ import ScrollPicker from "./ScrollPicker";
 type Props = {
   handleScroll: (e: React.UIEvent<HTMLUListElement>, type: InputType) => void;
   inputIndexes: InputIndexes;
+  optionItemHeight: number;
 };
 
 const hourOptions: Option[] = [...Array(24).keys()].map((i) => ({
@@ -16,16 +17,17 @@ const minuteSecondOptions: Option[] = [...Array(60).keys()].map((i) => ({
   value: i,
 }));
 
-const Input = ({ handleScroll, inputIndexes }: Props) => {
+const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
   return (
     <>
-      <div className="flex flex-row relative bg-black text-white backdrop-blur-lg ">
+      <div className="flex w-full flex-row relative bg-black text-white backdrop-blur-lg ">
         <div className="w-1/3 z-[15]">
           <ScrollPicker
             handleScroll={handleScroll}
             options={hourOptions}
             inputIndex={inputIndexes.hours}
             type="hours"
+            optionItemHeight={optionItemHeight}
           />
         </div>
         <div className="w-1/3 z-[15]">
@@ -44,10 +46,10 @@ const Input = ({ handleScroll, inputIndexes }: Props) => {
             type="seconds"
           />
         </div>
-        <div className="absolute top-[112px] flex border-slate-950 border w-full h-[28px] justify-around  z-[-1] rounded-l  text-white bg-slate-400  bg-[50%]">
-          <div>hours</div>
-          <div>min</div>
-          <div>sec</div>
+        <div className="absolute top-[0%] text-[2.5vh] font-bold leading-[5vh] flex border-slate-950  w-full h-[5vh] justify-around  z-[-1]  text-white bg-slate-400  bg-[50%]">
+          <div className="ml-2">hours</div>
+          <div className="">min</div>
+          <div className="">sec</div>
         </div>
       </div>
     </>

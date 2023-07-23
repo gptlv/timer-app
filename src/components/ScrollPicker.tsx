@@ -5,14 +5,21 @@ type Props = {
   options: Option[];
   inputIndex: number;
   type: InputType;
+  optionItemHeight: number;
 };
 
-const ScrollPicker = ({ handleScroll, options, inputIndex, type }: Props) => {
+const ScrollPicker = ({
+  handleScroll,
+  options,
+  inputIndex,
+  type,
+  optionItemHeight,
+}: Props) => {
   const ulRef = useRef<HTMLUListElement>(null);
 
   const scrollTo = (itemIndex: number | null) => {
     if (itemIndex === null) return;
-    ulRef.current!.scrollTop = itemIndex * 28;
+    ulRef.current!.scrollTop = itemIndex * optionItemHeight; //! doesn't work until scroll
   };
 
   useEffect(() => {
@@ -21,23 +28,25 @@ const ScrollPicker = ({ handleScroll, options, inputIndex, type }: Props) => {
 
   return (
     <ul
-      className="bg-transparent max-h-[252px] no-scrollbar overflow-y-scroll scroll-smooth snap-y snap-proximity flex-col relative py-[112px]"
+      className="h-[45vh] no-scrollbar overflow-y-scroll scroll-smooth snap-y snap-proximity flex flex-col relative "
       onScroll={(e) => handleScroll(e, type)}
       ref={ulRef}
     >
       {options.map((option, index) => (
-        <li
-          className="snap-center h-[28px]"
-          key={`${option.key}-${option.value}`}
-        >
+        <li className="snap-center" key={`${option.key}-${option.value}`}>
           <button
-            className="text-left text-sm w-full px-2 py-1 cursor-pointer"
+            className="w-1/3  py-1 cursor-pointer h-[5vh] flex"
             onClick={() => {
               console.log(option.value);
               scrollTo(option.value);
             }}
           >
-            <span className={index === inputIndex ? "font-bold" : ""}>
+            <span
+              className={
+                (index === inputIndex ? "font-bold" : "") +
+                "inline-block text-right w-full"
+              }
+            >
               {option.value}
             </span>
           </button>
