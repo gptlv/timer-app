@@ -36,6 +36,7 @@ const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
             options={minuteSecondOptions}
             inputIndex={inputIndexes.minutes}
             type="minutes"
+            optionItemHeight={optionItemHeight}
           />
         </div>
         <div className="w-1/3 z-[15]">
@@ -44,9 +45,10 @@ const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
             options={minuteSecondOptions}
             inputIndex={inputIndexes.seconds}
             type="seconds"
+            optionItemHeight={optionItemHeight}
           />
         </div>
-        <div className="absolute top-[0%] text-[2.5vh] font-bold leading-[5vh] flex border-slate-950  w-full h-[5vh] justify-around  z-[-1]  text-white bg-slate-400  bg-[50%]">
+        <div className="absolute top-[20vh] text-[2.5vh] font-bold leading-[5vh] flex border-slate-950  w-full h-[5vh] justify-around  z-[-1]  text-white bg-gray-900  bg-[50%]">
           <div className="ml-2">hours</div>
           <div className="">min</div>
           <div className="">sec</div>

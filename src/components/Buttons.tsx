@@ -16,18 +16,27 @@ const Buttons = ({
   isPauseButtonPressed,
 }: Props) => {
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full flex justify-between items-center ">
       <button
         {...(isCancelButtonDisabled ? { disabled: true } : {})}
         onClick={handleCancelButtonClick}
+        className="rounded-full w-[15vh] h-[15vh] bg-gray-900 text-white"
       >
         Cancel
       </button>
       {!isStartButtonVisible ? (
-        <button onClick={handleStartButtonClick}>Start</button>
+        <button
+          onClick={handleStartButtonClick}
+          className="rounded-full w-[15vh] h-[15vh] bg-green-950 text-green-400"
+        >
+          Start
+        </button>
       ) : null}
       {isStartButtonVisible ? (
-        <button onClick={handlePauseButtonClick}>
+        <button
+          onClick={handlePauseButtonClick}
+          className="rounded-full w-[15vh] h-[15vh] bg-orange-900 text-orange-500"
+        >
           {isPauseButtonPressed ? "Resume" : "Pause"}
         </button>
       ) : null}

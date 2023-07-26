@@ -1,5 +1,6 @@
 import { Option, InputType } from "../shared/types";
 import { useEffect, useRef } from "react";
+
 type Props = {
   handleScroll: (e: React.UIEvent<HTMLUListElement>, type: InputType) => void;
   options: Option[];
@@ -19,7 +20,7 @@ const ScrollPicker = ({
 
   const scrollTo = (itemIndex: number | null) => {
     if (itemIndex === null) return;
-    ulRef.current!.scrollTop = itemIndex * optionItemHeight; //! doesn't work until scroll
+    ulRef.current!.scrollTop = itemIndex * optionItemHeight; // adjust scrollTop for padding
   };
 
   useEffect(() => {
@@ -28,14 +29,14 @@ const ScrollPicker = ({
 
   return (
     <ul
-      className="h-[45vh] no-scrollbar overflow-y-scroll scroll-smooth snap-y snap-proximity flex flex-col relative "
+      className="h-[45vh] no-scrollbar overflow-y-scroll scroll-smooth snap-y snap-proximity flex flex-col relative py-[20vh]"
       onScroll={(e) => handleScroll(e, type)}
       ref={ulRef}
     >
       {options.map((option, index) => (
         <li className="snap-center" key={`${option.key}-${option.value}`}>
           <button
-            className="w-1/3  py-1 cursor-pointer h-[5vh] flex"
+            className="w-1/3 py-1 cursor-pointer h-[5vh] flex"
             onClick={() => {
               console.log(option.value);
               scrollTo(option.value);

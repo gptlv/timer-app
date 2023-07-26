@@ -27,11 +27,11 @@ const App = ({}: Props) => {
     seconds: 0,
   });
 
-  const [scrollPositions, setScrollPositions] = useState<InputIndexes>({
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  }); //?
+  // const [scrollPositions, setScrollPositions] = useState<InputIndexes>({
+  //   hours: 0,
+  //   minutes: 0,
+  //   seconds: 0,
+  // });
 
   const [isInputDisabled, setIsInputDisabled] = useState<boolean>(false);
   const [isStartButtonVisible, setIsStartButtonVisible] =
@@ -41,7 +41,9 @@ const App = ({}: Props) => {
   const [isPauseButtonPressed, setIsPauseButtonPressed] =
     useState<boolean>(false);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
-  const [optionItemHeight, setOptionItemHeight] = useState<number>(0);
+  const [optionItemHeight, setOptionItemHeight] = useState<number>(
+    window.innerHeight * 0.05
+  );
   const elapsedTimeRef = useRef<number>(0);
 
   const handleScroll = (
@@ -55,14 +57,14 @@ const App = ({}: Props) => {
     const itemHeight = items[0].offsetHeight;
     setOptionItemHeight(itemHeight);
     const scrollPosition = container.scrollTop - 4 * itemHeight; //4 elements gap before and after options
-    setScrollPositions((prevState) => {
-      return {
-        ...prevState,
-        [type]: scrollPosition,
-      };
-    });
+    // setScrollPositions((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     [type]: scrollPosition,
+    //   };
+    // });
     const centerIndex = Math.floor(
-      (scrollPosition + containerHeight / 2) / itemHeight
+      (scrollPosition + containerHeight / 2) / itemHeight - 0.5 // adjust for edge cases
     );
     setInputIndexes((prevState) => {
       return {
@@ -70,6 +72,7 @@ const App = ({}: Props) => {
         [type]: centerIndex,
       };
     });
+    console.log(centerIndex);
     const centerItem = Number(items[centerIndex].textContent ?? 0);
     setInputTime((prevState) => {
       return {
@@ -84,6 +87,7 @@ const App = ({}: Props) => {
   const handleStartButtonClick = useCallback(() => {
     const { hours, minutes, seconds } = inputTime;
     const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+    if (totalSeconds === 0) return;
     const newTimer = { hours, minutes, seconds, totalSeconds };
 
     setIsStartButtonVisible(true);
@@ -189,8 +193,8 @@ const App = ({}: Props) => {
   }, [isTimerRunning]);
 
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center">
-      <div className="w-4/5 text-[3.5vh] leading-[3.5vh]">
+    <div className="h-screen w-full flex flex-col items-center justify-center bg-black">
+      <div className="w-4/5 text-[3.5vh] leading-[3.5vh] flex flex-col items-center justify-center">
         {!isInputDisabled ? (
           <Input
             handleScroll={handleScroll}
