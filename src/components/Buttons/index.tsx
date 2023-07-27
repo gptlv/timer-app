@@ -3,7 +3,7 @@ type Props = {
   isCancelButtonDisabled: boolean;
   handleCancelButtonClick: () => void;
   handleStartButtonClick: () => void;
-  handlePauseButtonClick: () => void;
+  handlePauseResumeButtonClick: () => void;
   isPauseButtonPressed: boolean;
 };
 
@@ -12,11 +12,11 @@ const Buttons = ({
   isCancelButtonDisabled,
   handleCancelButtonClick,
   handleStartButtonClick,
-  handlePauseButtonClick,
+  handlePauseResumeButtonClick,
   isPauseButtonPressed,
 }: Props) => {
   return (
-    <div className="w-full h-full flex justify-between items-center ">
+    <div className="w-full h-full flex justify-between items-center text-[2.5vh]">
       <button
         {...(isCancelButtonDisabled ? { disabled: true } : {})}
         onClick={handleCancelButtonClick}
@@ -34,7 +34,7 @@ const Buttons = ({
       ) : null}
       {isStartButtonVisible ? (
         <button
-          onClick={handlePauseButtonClick}
+          onClick={handlePauseResumeButtonClick}
           className="rounded-full w-[15vh] h-[15vh] bg-orange-900 text-orange-500"
         >
           {isPauseButtonPressed ? "Resume" : "Pause"}

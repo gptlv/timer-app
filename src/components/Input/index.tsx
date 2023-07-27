@@ -1,5 +1,5 @@
-import { Option, InputType, InputIndexes } from "../shared/types";
-import ScrollPicker from "./ScrollPicker";
+import { Option, InputType, InputIndexes } from "../../types";
+import ScrollPicker from "../../shared/ScrollPicker";
 
 type Props = {
   handleScroll: (e: React.UIEvent<HTMLUListElement>, type: InputType) => void;

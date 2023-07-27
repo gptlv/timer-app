@@ -1,4 +1,4 @@
-import { Time } from "../shared/types";
+import { Time } from "../../types";
 
 type Props = { timer: Time };
 

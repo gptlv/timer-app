@@ -1,4 +1,4 @@
-import { Option, InputType } from "../shared/types";
+import { Option, InputType } from "../types";
 import { useEffect, useRef } from "react";
 
 type Props = {
@@ -44,8 +44,9 @@ const ScrollPicker = ({
           >
             <span
               className={
-                (index === inputIndex ? "font-bold" : "") +
-                "inline-block text-right w-full"
+                (index === inputIndex
+                  ? "text-white font-bold "
+                  : "text-gray-600 ") + "inline-block text-right w-full"
               }
             >
               {option.value}
