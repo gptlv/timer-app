@@ -20,7 +20,7 @@ const minuteSecondOptions: Option[] = [...Array(60).keys()].map((i) => ({
 const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
   return (
     <>
-      <div className="relative grid w-full grid-cols-[1fr_2fr_1fr] grid-rows-1 bg-black text-lg leading-[3.5vh] text-white backdrop-blur-lg md:text-xl">
+      <div className="relative grid w-full grid-cols-[1fr_1fr_1fr] grid-rows-1 bg-black text-base leading-[3.5vh] text-white backdrop-blur-lg md:text-xl">
         <div className="z-[15]">
           <ScrollPicker
             handleScroll={handleScroll}
@@ -50,13 +50,13 @@ const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
         </div>
         <div className="absolute top-[20vh]  z-[-1] flex h-[5vh] w-full items-center  border-slate-950  bg-gray-900 bg-[50%]  text-white">
           <div className="basis-1/3 text-right">
-            <span className="">hours</span>
+            <span className="md:pr-1">hours</span>
           </div>
           <div className="basis-1/3 text-center">
-            <span>min</span>
+            <span className="pl-14 md:pl-16">min</span>
           </div>
           <div className="basis-1/3 text-right">
-            <span>sec</span>
+            <span className="pr-3 md:pr-6">sec</span>
           </div>
         </div>
       </div>

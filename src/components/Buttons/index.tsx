@@ -21,7 +21,7 @@ const Buttons = ({
         <button
           {...(isCancelButtonDisabled ? { disabled: true } : {})}
           onClick={handleCancelButtonClick}
-          className="h-[15vh] w-[15vh] rounded-full bg-gray-900 text-white "
+          className="h-[15vmax] w-[15vmax] rounded-full bg-gray-900 text-white "
         >
           Cancel
         </button>
@@ -30,7 +30,7 @@ const Buttons = ({
         {!isStartButtonVisible ? (
           <button
             onClick={handleStartButtonClick}
-            className="row-start-2 h-[15vh] w-[15vh] rounded-full bg-green-950 text-green-400 md:col-start-1 md:row-start-1"
+            className="row-start-2 h-[15vmax] w-[15vmax] rounded-full bg-green-950 text-green-400 md:col-start-1 md:row-start-1"
           >
             Start
           </button>
@@ -39,7 +39,7 @@ const Buttons = ({
         {isStartButtonVisible ? (
           <button
             onClick={handlePauseResumeButtonClick}
-            className="row-start-2 h-[15vh] w-[15vh] rounded-full bg-orange-900 text-orange-500 md:col-start-3 md:row-start-1"
+            className="row-start-2 h-[15vmax] w-[15vmax] rounded-full bg-orange-900 text-orange-500 md:col-start-3 md:row-start-1"
           >
             {isPauseButtonPressed ? "Resume" : "Pause"}
           </button>

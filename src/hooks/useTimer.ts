@@ -31,31 +31,30 @@ const useTimer = () => {
     useState<boolean>(false);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const [optionItemHeight, setOptionItemHeight] = useState<number>(
-    window.innerHeight * 0.05
+    window.innerHeight * 0.05,
   );
   const elapsedTimeRef = useRef<number>(0);
 
   const handleScroll = (
     e: React.UIEvent<HTMLUListElement>,
-    type: InputType
+    type: InputType,
   ) => {
     e.preventDefault();
     const container = e.currentTarget;
-    const containerHeight = container.offsetHeight;
     const items = container.querySelectorAll("li");
     const itemHeight = items[0].offsetHeight;
     setOptionItemHeight(itemHeight);
-    const scrollPosition = container.scrollTop - 4 * itemHeight; //4 elements gap before and after options
-    const centerIndex = Math.floor(
-      (scrollPosition + containerHeight / 2) / itemHeight - 0.5 // adjust 0.5px for edge cases
+    const centerIndex = Math.trunc(
+      container.scrollTop / Math.floor(items[0].getBoundingClientRect().height),
     );
+
+    if (centerIndex < 0 || centerIndex >= items.length) return;
     setInputIndexes((prevState) => {
       return {
         ...prevState,
         [type]: centerIndex,
       };
     });
-    console.log(centerIndex);
     const centerItem = Number(items[centerIndex].textContent ?? 0);
     setInputTime((prevState) => {
       return {
@@ -65,7 +64,7 @@ const useTimer = () => {
           prevState.hours * 3600 + prevState.minutes * 60 + prevState.seconds,
       };
     });
-    console.log(inputIndexes);
+    // console.log(inputIndexes);
   };
 
   const handleStartButtonClick = useCallback(() => {

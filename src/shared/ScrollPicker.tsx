@@ -35,11 +35,14 @@ const ScrollPicker = ({
     >
       {options.map((option, index) => (
         <li
-          className="flex basis-full snap-center items-center justify-center"
+          className="flex snap-center items-center justify-center"
           key={`${option.key}-${option.value}`}
         >
           <button
-            className="flex h-[5vh] w-1/3 cursor-pointer py-1"
+            className={
+              "h-[5vh] w-full cursor-pointer py-1 text-center"
+              // + (type === "minutes" ? "text-center" : "text-center")
+            }
             onClick={() => {
               console.log(option.value);
               scrollTo(option.value);
@@ -47,9 +50,7 @@ const ScrollPicker = ({
           >
             <span
               className={
-                (index === inputIndex
-                  ? "font-bold text-white "
-                  : "text-gray-600 ") + "block w-full text-left"
+                index === inputIndex ? "font-bold text-white" : "text-gray-600 "
               }
             >
               {option.value}

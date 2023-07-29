@@ -20,9 +20,9 @@ const App = ({}: Props) => {
     optionItemHeight,
   } = useTimer();
   return (
-    <div className="grid min-h-screen w-full gap-0 sm:grid-cols-2 sm:grid-rows-2 md:grid-cols-[1fr_3fr_1fr] md:grid-rows-1">
+    <div className="grid min-h-screen w-full bg-black px-1 sm:grid-cols-2 sm:grid-rows-2 md:grid-cols-[1fr_3fr_1fr]  md:grid-rows-1 md:gap-5 lg:grid-cols-[1fr_2fr_1fr] lg:gap-0">
       <div className="col-span-2 flex h-full w-full flex-col items-center justify-center md:col-auto md:col-start-2 md:row-start-1">
-        <div className="flex w-4/5 flex-col items-center justify-center">
+        <div className="flex w-full flex-col items-center justify-center">
           {!isInputDisabled ? (
             <Input
               handleScroll={handleScroll}
@@ -33,9 +33,6 @@ const App = ({}: Props) => {
           {isInputDisabled ? <Timer timer={timer} /> : null}
         </div>
       </div>
-
-      {/* <div className="h-1/2 w-4/5 flex-col items-center justify-between"> */}
-      {/* <div className="w-full h-full flex justify-between items-center text-[2.5vh]"> */}
       <Buttons
         isStartButtonVisible={isStartButtonVisible}
         isCancelButtonDisabled={isCancelButtonDisabled}
@@ -44,8 +41,6 @@ const App = ({}: Props) => {
         handlePauseResumeButtonClick={handlePauseResumeButtonClick}
         isPauseButtonPressed={isPauseButtonPressed}
       />
-      {/* </div> */}
-      {/* </div> */}
     </div>
   );
 };
