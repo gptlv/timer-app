@@ -9,7 +9,7 @@ const Timer = ({ timer }: Props) => {
 
   return (
     <div
-      className="h-[40vmax] w-[40vmax] flex justify-center items-center text-[10vmax]  rounded-full bg-gray-900 text-white"
+      className="flex h-[45vmax] w-[45vmax] items-center justify-center rounded-full bg-gray-900 text-[10vmax] text-white"
       // style={{
       //   background: `conic-gradient(#ffa500_${(100).toFixed(
       //     2

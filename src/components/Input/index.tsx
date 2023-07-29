@@ -20,8 +20,8 @@ const minuteSecondOptions: Option[] = [...Array(60).keys()].map((i) => ({
 const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
   return (
     <>
-      <div className="flex w-full flex-row relative bg-black text-white backdrop-blur-lg ">
-        <div className="w-1/3 z-[15]">
+      <div className="relative grid w-full grid-cols-[1fr_2fr_1fr] grid-rows-1 bg-black text-lg leading-[3.5vh] text-white backdrop-blur-lg md:text-xl">
+        <div className="z-[15]">
           <ScrollPicker
             handleScroll={handleScroll}
             options={hourOptions}
@@ -30,7 +30,7 @@ const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
             optionItemHeight={optionItemHeight}
           />
         </div>
-        <div className="w-1/3 z-[15]">
+        <div className="z-[15]">
           <ScrollPicker
             handleScroll={handleScroll}
             options={minuteSecondOptions}
@@ -39,7 +39,7 @@ const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
             optionItemHeight={optionItemHeight}
           />
         </div>
-        <div className="w-1/3 z-[15]">
+        <div className="z-[15]">
           <ScrollPicker
             handleScroll={handleScroll}
             options={minuteSecondOptions}
@@ -48,10 +48,16 @@ const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
             optionItemHeight={optionItemHeight}
           />
         </div>
-        <div className="absolute top-[20vh] text-[2.5vh] font-bold leading-[5vh] flex border-slate-950  w-full h-[5vh] justify-around  z-[-1]  text-white bg-gray-900  bg-[50%]">
-          <div className="ml-2">hours</div>
-          <div className="">min</div>
-          <div className="">sec</div>
+        <div className="absolute top-[20vh]  z-[-1] flex h-[5vh] w-full items-center  border-slate-950  bg-gray-900 bg-[50%]  text-white">
+          <div className="basis-1/3 text-right">
+            <span className="">hours</span>
+          </div>
+          <div className="basis-1/3 text-center">
+            <span>min</span>
+          </div>
+          <div className="basis-1/3 text-right">
+            <span>sec</span>
+          </div>
         </div>
       </div>
     </>

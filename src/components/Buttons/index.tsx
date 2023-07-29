@@ -16,31 +16,36 @@ const Buttons = ({
   isPauseButtonPressed,
 }: Props) => {
   return (
-    <div className="w-full h-full flex justify-between items-center text-[2.5vh]">
-      <button
-        {...(isCancelButtonDisabled ? { disabled: true } : {})}
-        onClick={handleCancelButtonClick}
-        className="rounded-full w-[15vh] h-[15vh] bg-gray-900 text-white"
-      >
-        Cancel
-      </button>
-      {!isStartButtonVisible ? (
+    <>
+      <div className="row-start-2 flex items-center justify-center md:row-start-1">
         <button
-          onClick={handleStartButtonClick}
-          className="rounded-full w-[15vh] h-[15vh] bg-green-950 text-green-400"
+          {...(isCancelButtonDisabled ? { disabled: true } : {})}
+          onClick={handleCancelButtonClick}
+          className="h-[15vh] w-[15vh] rounded-full bg-gray-900 text-white "
         >
-          Start
+          Cancel
         </button>
-      ) : null}
-      {isStartButtonVisible ? (
-        <button
-          onClick={handlePauseResumeButtonClick}
-          className="rounded-full w-[15vh] h-[15vh] bg-orange-900 text-orange-500"
-        >
-          {isPauseButtonPressed ? "Resume" : "Pause"}
-        </button>
-      ) : null}
-    </div>
+      </div>
+      <div className="row-start-2 flex items-center justify-center md:row-start-1">
+        {!isStartButtonVisible ? (
+          <button
+            onClick={handleStartButtonClick}
+            className="row-start-2 h-[15vh] w-[15vh] rounded-full bg-green-950 text-green-400 md:col-start-1 md:row-start-1"
+          >
+            Start
+          </button>
+        ) : null}
+
+        {isStartButtonVisible ? (
+          <button
+            onClick={handlePauseResumeButtonClick}
+            className="row-start-2 h-[15vh] w-[15vh] rounded-full bg-orange-900 text-orange-500 md:col-start-3 md:row-start-1"
+          >
+            {isPauseButtonPressed ? "Resume" : "Pause"}
+          </button>
+        ) : null}
+      </div>
+    </>
   );
 };
 

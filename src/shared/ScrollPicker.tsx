@@ -29,14 +29,17 @@ const ScrollPicker = ({
 
   return (
     <ul
-      className="h-[45vh] no-scrollbar overflow-y-scroll scroll-smooth snap-y snap-proximity flex flex-col relative py-[20vh]"
+      className="no-scrollbar relative flex h-[45vh] w-full snap-y snap-proximity flex-col overflow-y-scroll scroll-smooth py-[20vh]"
       onScroll={(e) => handleScroll(e, type)}
       ref={ulRef}
     >
       {options.map((option, index) => (
-        <li className="snap-center" key={`${option.key}-${option.value}`}>
+        <li
+          className="flex basis-full snap-center items-center justify-center"
+          key={`${option.key}-${option.value}`}
+        >
           <button
-            className="w-1/3 py-1 cursor-pointer h-[5vh] flex"
+            className="flex h-[5vh] w-1/3 cursor-pointer py-1"
             onClick={() => {
               console.log(option.value);
               scrollTo(option.value);
@@ -45,8 +48,8 @@ const ScrollPicker = ({
             <span
               className={
                 (index === inputIndex
-                  ? "text-white font-bold "
-                  : "text-gray-600 ") + "inline-block text-right w-full"
+                  ? "font-bold text-white "
+                  : "text-gray-600 ") + "block w-full text-left"
               }
             >
               {option.value}
