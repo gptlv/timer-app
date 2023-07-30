@@ -1,22 +1,30 @@
 import { Time } from "../../types";
+import { useEffect, useRef, useState } from "react";
 
 type Props = { timer: Time };
 
 const Timer = ({ timer }: Props) => {
+  const [gradientDegrees, setGradientDegrees] = useState(360);
+  const initialSeconds = useRef(timer.totalSeconds);
+
+  useEffect(() => {
+    setGradientDegrees(
+      Math.round((timer.totalSeconds / initialSeconds.current) * 360),
+    );
+  }, [timer.totalSeconds]);
+
   const formatNumber = (num: number) => {
     return num.toString().padStart(2, "0");
   };
 
   return (
     <div
-      className="flex h-[35vmax] w-[35vmax] items-center justify-center rounded-full bg-gray-900 text-[8vmax] text-white"
-      // style={{
-      //   background: `conic-gradient(#ffa500_${(100).toFixed(
-      //     2
-      //   )}deg,#ededed_360deg)}`,
-      // }}
+      className="flex h-[35vmax] w-[35vmax] items-center justify-center rounded-full bg-gradient-to-tr from-orange-500 to-orange-100 text-[8vmax] text-white"
+      style={{
+        background: `conic-gradient(orange ${gradientDegrees}deg, rgb(17 24 39) 0deg)`,
+      }}
     >
-      <div>
+      <div className="flex h-[34vmax] w-[34vmax] items-center justify-center rounded-full bg-black">
         {timer.hours > 0 ? (
           <span>{`${formatNumber(timer.hours)}:`}</span>
         ) : null}
