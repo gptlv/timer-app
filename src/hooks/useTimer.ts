@@ -1,136 +1,89 @@
-import { Time, InputType, InputIndexes } from "../types";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { Timer, TimerState } from "../types";
+import { useState, useCallback, useRef } from "react";
 
 const useTimer = () => {
-  const [timer, setTimer] = useState<Time>({
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    totalSeconds: 0,
-  });
-
-  const [inputTime, setInputTime] = useState<Time>({
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    totalSeconds: 0,
-  });
-
-  const [inputIndexes, setInputIndexes] = useState<InputIndexes>({
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-
-  const [isInputDisabled, setIsInputDisabled] = useState<boolean>(false);
-  const [isStartButtonVisible, setIsStartButtonVisible] =
-    useState<boolean>(false);
-  const [isCancelButtonDisabled, setIsCancelButtonDisabled] =
-    useState<boolean>(false);
-  const [isPauseButtonPressed, setIsPauseButtonPressed] =
-    useState<boolean>(false);
-  const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
-  const [optionItemHeight, setOptionItemHeight] = useState<number>(
-    window.innerHeight * 0.05,
-  );
   const elapsedTimeRef = useRef<number>(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleScroll = (
-    e: React.UIEvent<HTMLUListElement>,
-    type: InputType,
-  ) => {
-    e.preventDefault();
-    const container = e.currentTarget;
-    const items = container.querySelectorAll("li");
-    const itemHeight = items[0].offsetHeight;
-    setOptionItemHeight(itemHeight);
-    const centerIndex = Math.trunc(
-      container.scrollTop / Math.floor(items[0].getBoundingClientRect().height),
-    );
+  const [timer, setTimer] = useState<Timer>({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    totalSeconds: 0,
+    state: TimerState.Idle,
+  });
 
-    if (centerIndex < 0 || centerIndex >= items.length) return;
-    setInputIndexes((prevState) => {
-      return {
-        ...prevState,
-        [type]: centerIndex,
-      };
-    });
-    const centerItem = Number(items[centerIndex].textContent ?? 0);
-    setInputTime((prevState) => {
-      return {
-        ...prevState,
-        [type]: centerItem,
-        totalSeconds:
-          prevState.hours * 3600 + prevState.minutes * 60 + prevState.seconds,
-      };
-    });
-    // console.log(inputIndexes);
-  };
-
-  const handleStartButtonClick = useCallback(() => {
-    const { hours, minutes, seconds } = inputTime;
-    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-    if (totalSeconds === 0) return;
-    const newTimer = { hours, minutes, seconds, totalSeconds };
-
-    setIsStartButtonVisible(true);
-    setIsCancelButtonDisabled(false);
-    setIsTimerRunning(true);
-    setIsInputDisabled(true);
+  const startTimer = useCallback(() => {
+    console.log(timer);
+    if (timer.totalSeconds === 0) return;
     elapsedTimeRef.current = 0;
 
-    setTimer(newTimer);
-  }, [inputTime]);
+    intervalRef.current = setInterval(() => {
+      decrementTimerValues();
 
-  const handleCancelButtonClick = useCallback(() => {
-    setIsCancelButtonDisabled(true);
-    setIsInputDisabled(false);
-    setIsStartButtonVisible(false);
-    setIsTimerRunning(false);
-    setIsPauseButtonPressed(false);
-    setTimer({
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-      totalSeconds: 0,
-    });
-  }, []);
+      setTimer((prevState) => {
+        console.log(prevState);
+        return { ...prevState, state: TimerState.Running };
+      });
+    }, 1000);
+  }, [timer]);
 
   const resumeTimer = useCallback(() => {
-    setIsTimerRunning(true);
-  }, []);
+    setTimer((currentTimerState) => {
+      return { ...currentTimerState, state: TimerState.Running };
+    });
+
+    if (intervalRef.current === null) {
+      startTimer();
+    }
+  }, [timer, startTimer]);
 
   const pauseTimer = useCallback(() => {
-    setIsTimerRunning(false);
+    setTimer((currentTimerState) => {
+      return { ...currentTimerState, state: TimerState.Paused };
+    });
+
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   }, []);
 
-  const handlePauseResumeButtonClick = useCallback(() => {
-    if (isPauseButtonPressed) {
-      setIsPauseButtonPressed(false);
-      resumeTimer();
-    } else {
-      setIsPauseButtonPressed(true);
-      pauseTimer();
+  const stopTimer = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
-  }, [isPauseButtonPressed, pauseTimer, resumeTimer]);
+    setTimer((currentTimerState) => {
+      return {
+        ...currentTimerState,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        totalSeconds: 0,
+        state: TimerState.Idle,
+      };
+    });
 
-  const handleTimerFinish = useCallback(() => {
-    setIsTimerRunning(false);
-    handleCancelButtonClick();
-  }, [handleCancelButtonClick]);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
 
   const decrementTimerValues = useCallback(() => {
-    setTimer((currentTimerValue) => {
+    setTimer((currentTimerState) => {
       const newTotalSeconds =
-        currentTimerValue.totalSeconds > 1
-          ? currentTimerValue.totalSeconds - 1
+        currentTimerState.totalSeconds > 1
+          ? currentTimerState.totalSeconds - 1
           : 0;
 
       if (newTotalSeconds === 0) {
-        handleTimerFinish();
+        stopTimer();
       }
 
       return {
+        ...currentTimerState,
         hours: Math.floor(newTotalSeconds / 3600),
         minutes: Math.floor((newTotalSeconds % 3600) / 60),
         seconds: Math.floor(newTotalSeconds % 60),
@@ -139,54 +92,15 @@ const useTimer = () => {
     });
 
     elapsedTimeRef.current += 1;
-  }, []);
-
-  useEffect(() => {
-    if (isTimerRunning) {
-      const id = setInterval(() => {
-        decrementTimerValues();
-        setTimer((prevState) => {
-          console.log(prevState);
-          return { ...prevState };
-        });
-      }, 1000);
-
-      return () => clearInterval(id);
-    }
-  }, [isTimerRunning, decrementTimerValues]);
-
-  useEffect(() => {
-    if (isTimerRunning && isPauseButtonPressed) {
-      setTimer((prevState) => {
-        const currentTotalSeconds =
-          prevState.hours * 3600 +
-          prevState.minutes * 60 +
-          prevState.seconds -
-          elapsedTimeRef.current;
-
-        return {
-          ...prevState,
-          hours: Math.floor(currentTotalSeconds / 3600),
-          minutes: Math.floor((currentTotalSeconds % 3600) / 60),
-          seconds: Math.floor(currentTotalSeconds % 60),
-          totalSeconds: currentTotalSeconds,
-        };
-      });
-    }
-  }, [isTimerRunning]);
+  }, [timer, stopTimer]);
 
   return {
     timer,
-    isInputDisabled,
-    isStartButtonVisible,
-    isCancelButtonDisabled,
-    isPauseButtonPressed,
-    handleStartButtonClick,
-    handleCancelButtonClick,
-    handlePauseResumeButtonClick,
-    handleScroll,
-    inputIndexes,
-    optionItemHeight,
+    setTimer,
+    startTimer,
+    pauseTimer,
+    resumeTimer,
+    stopTimer,
   };
 };
 

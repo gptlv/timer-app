@@ -5,6 +5,10 @@ export type Time = {
   totalSeconds: number;
 };
 
+export type Timer = Time & {
+  state: TimerState;
+};
+
 export type Option = {
   key: string;
   value: number | null;
@@ -17,3 +21,16 @@ export type InputIndexes = {
   minutes: number;
   seconds: number;
 };
+
+export enum ButtonType {
+  Cancel,
+  Start,
+  Pause,
+  Resume,
+}
+
+export enum TimerState {
+  Idle,
+  Running,
+  Paused,
+}

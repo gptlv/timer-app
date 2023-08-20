@@ -17,11 +17,14 @@ const Timer = ({ timer }: Props) => {
     return num.toString().padStart(2, "0");
   };
 
+  //TODO: add transition on background change
+
   return (
     <div
       className="flex h-[35vmax] w-[35vmax] items-center justify-center rounded-full bg-gradient-to-tr from-orange-500 to-orange-100 text-[8vmax] text-white"
       style={{
         background: `conic-gradient(orange ${gradientDegrees}deg, rgb(17 24 39) 0deg)`,
+        transition: "all 0.5s ease-in-out",
       }}
     >
       <div className="flex h-[34vmax] w-[34vmax] items-center justify-center rounded-full bg-black">

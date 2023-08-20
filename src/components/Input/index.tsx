@@ -1,53 +1,24 @@
-import { Option, InputType, InputIndexes } from "../../types";
 import ScrollPicker from "../../shared/ScrollPicker";
+import { Timer } from "../../types";
 
 type Props = {
-  handleScroll: (e: React.UIEvent<HTMLUListElement>, type: InputType) => void;
-  inputIndexes: InputIndexes;
-  optionItemHeight: number;
+  setTimer: React.Dispatch<React.SetStateAction<Timer>>;
 };
 
-const hourOptions: Option[] = [...Array(24).keys()].map((i) => ({
-  key: i.toString(),
-  value: i,
-}));
-
-const minuteSecondOptions: Option[] = [...Array(60).keys()].map((i) => ({
-  key: i.toString(),
-  value: i,
-}));
-
-const Input = ({ handleScroll, inputIndexes, optionItemHeight }: Props) => {
+const Input = ({ setTimer }: Props) => {
   return (
     <>
       <div className="relative grid w-full grid-cols-[1fr_1fr_1fr] grid-rows-1 bg-black text-base leading-[3.5vh] text-white backdrop-blur-lg md:text-xl">
         <div className="z-[15]">
-          <ScrollPicker
-            handleScroll={handleScroll}
-            options={hourOptions}
-            inputIndex={inputIndexes.hours}
-            type="hours"
-            optionItemHeight={optionItemHeight}
-          />
+          <ScrollPicker setTimer={setTimer} type="hours" />
         </div>
         <div className="z-[15]">
-          <ScrollPicker
-            handleScroll={handleScroll}
-            options={minuteSecondOptions}
-            inputIndex={inputIndexes.minutes}
-            type="minutes"
-            optionItemHeight={optionItemHeight}
-          />
+          <ScrollPicker setTimer={setTimer} type="minutes" />
         </div>
         <div className="z-[15]">
-          <ScrollPicker
-            handleScroll={handleScroll}
-            options={minuteSecondOptions}
-            inputIndex={inputIndexes.seconds}
-            type="seconds"
-            optionItemHeight={optionItemHeight}
-          />
+          <ScrollPicker setTimer={setTimer} type="seconds" />
         </div>
+        {/* move to a new component */}
         <div className="absolute top-[20vh]  z-[-1] flex h-[5vh] w-full items-center  border-slate-950  bg-gray-900 bg-[50%]  text-white">
           <div className="basis-1/3 text-right">
             <span className="md:pr-1">hours</span>
