@@ -30,7 +30,7 @@ const Button = ({ type, action, timerState, visible, children }: Props) => {
       disabled={type === ButtonType.Cancel && timerState === TimerState.Idle}
     >
       {children}
-    </button>
+    </button> //TODO: prevent multiple clicks
   );
 };
 

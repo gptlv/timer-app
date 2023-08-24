@@ -16,15 +16,17 @@ const useTimer = () => {
   const startTimer = useCallback(() => {
     console.log(timer);
     if (timer.totalSeconds === 0) return;
+    if (timer.state === TimerState.Running) return;
     elapsedTimeRef.current = 0;
 
-    intervalRef.current = setInterval(() => {
-      decrementTimerValues();
+    setTimer((prevState) => {
+      console.log(prevState);
+      return { ...prevState, state: TimerState.Running };
+    });
 
-      setTimer((prevState) => {
-        console.log(prevState);
-        return { ...prevState, state: TimerState.Running };
-      });
+    intervalRef.current = setTimeout(function tick() {
+      decrementTimerValues();
+      intervalRef.current = setTimeout(tick, 1000);
     }, 1000);
   }, [timer]);
 
@@ -47,7 +49,7 @@ const useTimer = () => {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  }, []);
+  }, [timer]);
 
   const stopTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -69,16 +71,17 @@ const useTimer = () => {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  }, []);
+  }, [timer]);
 
   const decrementTimerValues = useCallback(() => {
     setTimer((currentTimerState) => {
       const newTotalSeconds =
-        currentTimerState.totalSeconds > 1
+        currentTimerState.totalSeconds > 0
           ? currentTimerState.totalSeconds - 1
           : 0;
 
       if (newTotalSeconds === 0) {
+        console.log("Timer is done"); //TODO: add sound
         stopTimer();
       }
 

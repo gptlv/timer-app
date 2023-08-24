@@ -1,5 +1,5 @@
 import { Timer, Option, InputType } from "../types";
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type Props = {
   setTimer: React.Dispatch<React.SetStateAction<Timer>>;
@@ -17,62 +17,74 @@ const minuteSecondOptions: Option[] = [...Array(60).keys()].map((i) => ({
 }));
 
 const ScrollPicker = ({ setTimer, type }: Props) => {
-  const [optionItemHeight, setOptionItemHeight] = useState<number>(
-    window.innerHeight * 0.05,
-  );
+  const optionItemHeight = window.innerHeight * 0.05;
+  const containerRef = useRef<HTMLUListElement>(null);
+  const [centerItem, setCenterItem] = useState<number | null>(null);
+
+  useEffect(() => {
+    const callback: IntersectionObserverCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const item = entry.target.textContent;
+          setCenterItem(Number(item));
+        }
+      });
+    };
+
+    const options: IntersectionObserverInit = {
+      root: containerRef.current,
+      threshold: 0.5, // Adjust the threshold as needed
+    };
+
+    const observer = new IntersectionObserver(callback, options);
+
+    const items = containerRef.current?.querySelectorAll("li");
+    items?.forEach((item) => observer.observe(item));
+
+    return () => observer.disconnect();
+  }, []);
+
   const handleScroll = (
     e: React.UIEvent<HTMLUListElement>,
     type: InputType,
   ) => {
     e.preventDefault();
-    const container = e.currentTarget;
-    const items = container.querySelectorAll("li");
-    const itemHeight = items[0].offsetHeight;
-    setOptionItemHeight(itemHeight);
-    const centerIndex = Math.trunc(
-      container.scrollTop / Math.floor(items[0].getBoundingClientRect().height),
-    );
-    if (centerIndex < 0 || centerIndex >= items.length) return;
-
-    const centerItem = Number(items[centerIndex].textContent ?? 0);
-
     setTimer((currentTimerState) => {
+      const { hours, minutes, seconds } = currentTimerState;
+      let totalSeconds = 0;
+
+      if (type === "hours") {
+        totalSeconds = (centerItem || 0) * 3600 + minutes * 60 + seconds;
+      } else if (type === "minutes") {
+        totalSeconds = hours * 3600 + (centerItem || 0) * 60 + seconds;
+      } else if (type === "seconds") {
+        totalSeconds = hours * 3600 + minutes * 60 + (centerItem || 0);
+      }
+
       const newValues = {
         ...currentTimerState,
         [type]: centerItem,
-        totalSeconds:
-          currentTimerState.hours * 3600 +
-          currentTimerState.minutes * 60 +
-          currentTimerState.seconds,
+        totalSeconds: totalSeconds,
       };
+
       console.log(newValues);
-      return {
-        ...currentTimerState,
-        [type]: centerItem,
-        totalSeconds:
-          currentTimerState.hours * 3600 +
-          currentTimerState.minutes * 60 +
-          currentTimerState.seconds,
-      };
+
+      return newValues;
     });
   };
 
   const options = type === "hours" ? hourOptions : minuteSecondOptions;
-  const ulRef = useRef<HTMLUListElement>(null);
+
   const scrollTo = (itemIndex: number | null) => {
     if (itemIndex === null) return;
-    ulRef.current!.scrollTop = itemIndex * optionItemHeight; // adjust scrollTop for padding
+    containerRef.current!.scrollTop = itemIndex * optionItemHeight;
   };
-
-  // useEffect(() => {
-  //   scrollTo(options[inputIndex].value);
-  // }, []);
 
   return (
     <ul
       className="no-scrollbar relative flex h-[45vh] w-full snap-y snap-proximity flex-col overflow-y-scroll scroll-smooth py-[20vh]"
       onScroll={(e) => handleScroll(e, type)}
-      ref={ulRef}
+      ref={containerRef}
     >
       {options.map((option) => (
         <li
@@ -80,21 +92,12 @@ const ScrollPicker = ({ setTimer, type }: Props) => {
           key={`${option.key}-${option.value}`}
         >
           <button
-            className={
-              "h-[5vh] w-full cursor-pointer py-1 text-center"
-              // + (type === "minutes" ? "text-center" : "text-center")
-            }
+            className="h-[5vh] w-full cursor-pointer py-1 text-center"
             onClick={() => {
               scrollTo(option.value);
             }}
           >
-            <span
-            // className={
-            //   index === inputIndex ? "font-bold text-white" : "text-gray-600 "
-            // }
-            >
-              {option.value}
-            </span>
+            <span>{option.value}</span>
           </button>
         </li>
       ))}
