@@ -2,8 +2,7 @@ import { Timer, TimerState } from "../types";
 import { useState, useCallback, useRef } from "react";
 
 const useTimer = () => {
-  const elapsedTimeRef = useRef<number>(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const [timer, setTimer] = useState<Timer>({
     hours: 0,
@@ -14,19 +13,15 @@ const useTimer = () => {
   });
 
   const startTimer = useCallback(() => {
-    console.log(timer);
-    if (timer.totalSeconds === 0) return;
-    if (timer.state === TimerState.Running) return;
-    elapsedTimeRef.current = 0;
+    if (timer.totalSeconds === 0 || timer.state === TimerState.Running) return;
 
-    setTimer((prevState) => {
-      console.log(prevState);
-      return { ...prevState, state: TimerState.Running };
-    });
+    setTimer((currentTimerState) => ({
+      ...currentTimerState,
+      state: TimerState.Running,
+    }));
 
-    intervalRef.current = setTimeout(function tick() {
+    intervalRef.current = setInterval(() => {
       decrementTimerValues();
-      intervalRef.current = setTimeout(tick, 1000);
     }, 1000);
   }, [timer]);
 
@@ -35,10 +30,10 @@ const useTimer = () => {
       return { ...currentTimerState, state: TimerState.Running };
     });
 
-    if (intervalRef.current === null) {
+    if (intervalRef.current === undefined) {
       startTimer();
     }
-  }, [timer, startTimer]);
+  }, [timer]);
 
   const pauseTimer = useCallback(() => {
     setTimer((currentTimerState) => {
@@ -47,14 +42,14 @@ const useTimer = () => {
 
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
-      intervalRef.current = null;
+      intervalRef.current = undefined;
     }
   }, [timer]);
 
   const stopTimer = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
-      intervalRef.current = null;
+      intervalRef.current = undefined;
     }
     setTimer((currentTimerState) => {
       return {
@@ -66,11 +61,6 @@ const useTimer = () => {
         state: TimerState.Idle,
       };
     });
-
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
   }, [timer]);
 
   const decrementTimerValues = useCallback(() => {
@@ -85,6 +75,8 @@ const useTimer = () => {
         stopTimer();
       }
 
+      console.log(timer.state);
+
       return {
         ...currentTimerState,
         hours: Math.floor(newTotalSeconds / 3600),
@@ -93,8 +85,6 @@ const useTimer = () => {
         totalSeconds: newTotalSeconds,
       };
     });
-
-    elapsedTimeRef.current += 1;
   }, [timer, stopTimer]);
 
   return {
