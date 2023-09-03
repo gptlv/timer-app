@@ -1,6 +1,17 @@
 import { Timer, TimerState } from "../types";
 import { useState, useRef } from "react";
 
+const clearIntervalRef = (
+  intervalRef: React.MutableRefObject<
+    ReturnType<typeof setInterval> | undefined
+  >,
+) => {
+  if (intervalRef.current) {
+    clearInterval(intervalRef.current);
+    intervalRef.current = undefined;
+  }
+};
+
 const useTimer = () => {
   const [timer, setTimer] = useState<Timer>({
     totalSeconds: 0,
@@ -14,10 +25,10 @@ const useTimer = () => {
   const startTimer = () => {
     if (timer.totalSeconds === 0 || timer.state === TimerState.Running) return;
 
-    setTimer(() => ({
+    setTimer({
       ...timer,
       state: TimerState.Running,
-    }));
+    });
 
     intervalRef.current = setInterval(() => {
       decrementTimer();
@@ -25,57 +36,43 @@ const useTimer = () => {
   };
 
   const pauseTimer = () => {
-    setTimer(() => ({
+    if (timer.state !== TimerState.Running) return;
+    clearIntervalRef(intervalRef);
+
+    setTimer({
       ...timer,
       state: TimerState.Paused,
-    }));
-
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = undefined;
-    }
+    });
   };
 
   const resumeTimer = () => {
-    setTimer(() => ({
-      ...timer,
-      state: TimerState.Running,
-    }));
+    if (timer.state !== TimerState.Paused) return;
+    setTimer({ ...timer, state: TimerState.Running });
 
-    if (intervalRef.current === undefined) {
+    if (!intervalRef.current) {
       startTimer();
     }
   };
 
   const stopTimer = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = undefined;
-    }
-    setTimer(() => ({
+    clearIntervalRef(intervalRef);
+
+    setTimer({
       totalSeconds: 0,
       state: TimerState.Idle,
-    }));
+    });
   };
 
   const decrementTimer = () => {
-    setTimer((currentTimerState) => {
-      const newTotalSeconds =
-        currentTimerState.totalSeconds > 0
-          ? currentTimerState.totalSeconds - 1
-          : 0;
+    setTimer((currentTimer) => {
+      const newTotalSeconds = Math.max(0, currentTimer.totalSeconds - 1);
 
       if (newTotalSeconds === 0) {
-        console.log("Timer is done"); //TODO: add sound
-        stopTimer();
+        clearIntervalRef(intervalRef);
+        return { state: TimerState.Idle, totalSeconds: 0 };
       }
 
-      console.log(`Current timer state: ${TimerState[timer.state]}`);
-
-      return {
-        ...currentTimerState,
-        totalSeconds: newTotalSeconds,
-      };
+      return { ...currentTimer, totalSeconds: newTotalSeconds };
     });
   };
 

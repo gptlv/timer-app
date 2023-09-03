@@ -33,7 +33,7 @@ const ScrollPicker = ({ setTimer, type }: Props) => {
 
     const options: IntersectionObserverInit = {
       root: containerRef.current,
-      threshold: 0.5, // Adjust the threshold as needed
+      threshold: 0.5,
     };
 
     const observer = new IntersectionObserver(callback, options);
@@ -70,7 +70,7 @@ const ScrollPicker = ({ setTimer, type }: Props) => {
         totalSeconds: newTotalSeconds,
       };
 
-      console.log(centerItem, newValues);
+      // console.log(centerItem, newValues);
 
       return newValues;
     });
