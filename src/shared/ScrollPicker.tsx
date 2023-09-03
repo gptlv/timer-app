@@ -50,24 +50,27 @@ const ScrollPicker = ({ setTimer, type }: Props) => {
   ) => {
     e.preventDefault();
     setTimer((currentTimerState) => {
-      const { hours, minutes, seconds } = currentTimerState;
-      let totalSeconds = 0;
+      const { hours, minutes, seconds } = {
+        hours: Math.floor(currentTimerState.totalSeconds / 3600),
+        minutes: Math.floor((currentTimerState.totalSeconds % 3600) / 60),
+        seconds: Math.floor(currentTimerState.totalSeconds % 60),
+      };
+      let newTotalSeconds = 0;
 
       if (type === "hours") {
-        totalSeconds = (centerItem || 0) * 3600 + minutes * 60 + seconds;
+        newTotalSeconds = (centerItem || 0) * 3600 + minutes * 60 + seconds;
       } else if (type === "minutes") {
-        totalSeconds = hours * 3600 + (centerItem || 0) * 60 + seconds;
+        newTotalSeconds = hours * 3600 + (centerItem || 0) * 60 + seconds;
       } else if (type === "seconds") {
-        totalSeconds = hours * 3600 + minutes * 60 + (centerItem || 0);
+        newTotalSeconds = hours * 3600 + minutes * 60 + (centerItem || 0);
       }
 
       const newValues = {
         ...currentTimerState,
-        [type]: centerItem,
-        totalSeconds: totalSeconds,
+        totalSeconds: newTotalSeconds,
       };
 
-      console.log(newValues);
+      console.log(centerItem, newValues);
 
       return newValues;
     });

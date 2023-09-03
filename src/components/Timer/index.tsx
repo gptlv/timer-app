@@ -1,11 +1,16 @@
-import { Time } from "../../types";
+import { Timer } from "../../types";
 import { useEffect, useRef, useState } from "react";
 
-type Props = { timer: Time };
+type Props = { timer: Timer };
 
 const Timer = ({ timer }: Props) => {
   const [gradientDegrees, setGradientDegrees] = useState(360);
   const initialSeconds = useRef(timer.totalSeconds);
+  const { hours, minutes, seconds } = {
+    hours: Math.floor(timer.totalSeconds / 3600),
+    minutes: Math.floor((timer.totalSeconds % 3600) / 60),
+    seconds: Math.floor(timer.totalSeconds % 60),
+  };
 
   useEffect(() => {
     setGradientDegrees(
@@ -28,11 +33,9 @@ const Timer = ({ timer }: Props) => {
       }}
     >
       <div className="flex h-[34vmax] w-[34vmax] items-center justify-center rounded-full bg-black">
-        {timer.hours > 0 ? (
-          <span>{`${formatNumber(timer.hours)}:`}</span>
-        ) : null}
-        <span>{`${formatNumber(timer.minutes)}:`}</span>
-        <span>{formatNumber(timer.seconds)}</span>
+        {hours > 0 ? <span>{`${formatNumber(hours)}:`}</span> : null}
+        <span>{`${formatNumber(minutes)}:`}</span>
+        <span>{formatNumber(seconds)}</span>
       </div>
     </div>
   );

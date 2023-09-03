@@ -1,11 +1,5 @@
-export type Time = {
-  hours: number;
-  minutes: number;
-  seconds: number;
+export type Timer = {
   totalSeconds: number;
-};
-
-export type Timer = Time & {
   state: TimerState;
 };
 
