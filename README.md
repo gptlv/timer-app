@@ -1,14 +1,21 @@
 # Timer App
 
-A timer app inspired by the iOS timer. It is built using TypeScript, React, Tailwind, and the Intersection Observer API.
+A timer app inspired by the iOS timer.
+
+## Technologies used
+
+- React
+- TypeScript
+- Tailwind
+- Intersection Observer API
 
 ## Installation
 
 To install and run the app locally, follow these steps:
 
-1. Clone the repository: `git clone [repository_url]`
+1. Clone the repository
 
-2. Navigate to the project directory: `cd [project_directory]`
+2. Navigate to the project directory: `cd timer-app`
 
 3. Install the dependencies: `npm install`
 
